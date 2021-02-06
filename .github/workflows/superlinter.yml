@@ -1,22 +1,23 @@
-name: Daily 
+name: Create new daily note file
 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
+  # Run at the end of every day
+  schedule:
+    - cron: "0 0 * * *"
     
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  super-lint:
-    name: Lint code base
+  create-and-commit:
+    name: Create and commit new file
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        
       - name: Create new file
         env:
           API_KEY: ${{secrets.API_KEY }}
@@ -28,7 +29,8 @@ jobs:
               echo "# `date +"%Y-%m-%d"`" > $FILE
               echo "$FILE saved."
           fi
-      - name: git check in
+          
+      - name: Commit and push file
         env:
           GIT_OWNER_EMAIL: ${{ secrets.GIT_OWNER_EMAIL }} 
           PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
@@ -42,8 +44,5 @@ jobs:
             git remote add origin https://shawnoster:$PUSH_TOKEN@github.com/shawnoster/notes.git
             git push origin HEAD:main
           else
-            echo 'unable to detech changes'
+            echo 'unable to detect changes'
           fi
-          
-
-                 
