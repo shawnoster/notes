@@ -17,3 +17,33 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Create new file
+        env:
+          API_KEY: ${{secret.API_KEY }}
+        run: |
+          FILE=./`date +"%Y-%m-%d"`.md
+          if [ -f "$FILE" ]; then
+              echo "$FILE exists. Done for today."          
+          else
+              echo "# `date +"%Y-%m-%d"`" > $FILE
+              echo "$FILE saved."
+          echo
+      - name git check in
+        env:
+          GIT_OWNER_EMAIL: ${{ secrets.GIT_OWNER_EMAIL }} 
+          PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+        run: |
+          git config user.email "$GIT_OWNER_EMAIL"
+          git config user.name "shawnoster"
+          if [[ `git status --porcelain` ]]; then
+            git add .
+            git commit -a -m "add daily note"
+            git remote rm origin
+            git remote add origin https://shawnoster:$PUSH_TOKEN@github.com/shawnoster/notes.git
+            git push origin HEAD:main
+          else
+            echo 'unable to detech changes'
+          fi
+          
+
+                 
