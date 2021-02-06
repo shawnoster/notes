@@ -28,7 +28,7 @@ jobs:
               echo "# `date +"%Y-%m-%d"`" > $FILE
               echo "$FILE saved."
           echo
-      - name git check in
+      - name: git check in
         env:
           GIT_OWNER_EMAIL: ${{ secrets.GIT_OWNER_EMAIL }} 
           PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
